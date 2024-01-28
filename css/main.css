@@ -8,21 +8,27 @@
 }
 
 body {
+    background-image: url(../media/tadaima-okairi.jpg);
+    background-color: rgb(0, 0, 0);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+
     margin: 0;
     text-align: center;
     color: white;
+    min-height: 100dvh;
 
-    background-color: rgb(0, 0, 0);
-    background-image: url(../media/tadaima-okairi.jpg);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: contain;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
 }
 
 .wrapper {
     max-width: max(960px, 100% - 4rem);
     margin-inline: auto;
 }
+
 
 h1 {
     font-size: 6rem;
@@ -73,4 +79,10 @@ a {
 a:hover {
     color: rgb(255, 91, 91);
     text-decoration: underline 3px rgb(117, 0, 20);
+}
+
+a > svg {
+    width: 1rem;
+    margin-right: 2px;
+    fill: white;
 }
