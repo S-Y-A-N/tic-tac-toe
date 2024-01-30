@@ -48,10 +48,15 @@ h1 {
 
 .grid > button {
     height: 180px;
-    border: 2px solid rgb(90, 57, 57);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     background: none;
     border-right: none;
     border-top: none;
+
+    text-shadow: 0px 1px 50px rgb(59, 59, 59);
+    font-size: 4rem;
+    color: #8a0b0b;
+    font-weight: bold;
 }
 
 .grid > button:nth-child(1),
@@ -85,4 +90,79 @@ a > svg {
     width: 1rem;
     margin-right: 2px;
     fill: white;
+}
+
+.turn,
+.winner {
+    font-size: 2rem;
+}
+
+.turn {
+    margin-bottom: 2rem;
+    font-weight: 500;
+    text-shadow: -3px 2px black;
+}
+
+.winner {
+    margin-top: 2rem;
+    font-weight: 300;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+form {
+    width: 250px;
+    margin-inline: auto;
+
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+form > p {
+    margin-bottom: 1.4rem;
+    font-weight: 600;
+    text-shadow: 0px 1px 10px rgb(63, 63, 63);
+}
+
+form > div {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-bottom: 2rem;
+}
+
+form > div > input {
+    outline: none;
+    border: 1px solid rgb(190, 190, 190);
+    /* border-radius: 5px; */
+    padding: .3rem .5rem;
+}
+
+form > div > input:focus {
+    border: none;
+    border-bottom: 2px solid rgb(223, 106, 125);
+}
+
+form > div > label {
+    font-weight: 300;
+    font-size: .9rem;
+    align-self: flex-start;
+    margin-left: 5px;
+    text-shadow: 0px 1px 10px rgb(63, 63, 63);
+}
+
+form > button {
+    font-weight: 500;
+    border: none;
+    border-radius: 1rem;
+    padding: .5rem 1rem;
+}
+
+form > button:hover, form > button:focus {
+    cursor: pointer;
+    background-color: rgb(221, 255, 207);
 }
