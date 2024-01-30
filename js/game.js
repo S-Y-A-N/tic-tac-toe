@@ -25,47 +25,38 @@ const gameboard = (function () {
     }
 
     const checkRows = () => {
-        console.log('row!')
         for (let i = 0; i < 3; i++) {
             if (board[i][0] == board[i][1] && 
                 board[i][1] == board[i][2] &&
                 board[i][0] != 0)
                 return board[i][0];
         }
-
-        console.log('null row')
         return null;
     }
 
     const checkColumns = () => {
-        console.log('column!')
         for (let i = 0; i < 3; i++) {
             if (board[0][i] == board[1][i] &&
                 board[1][i] == board[2][i] &&
                 board[0][i] != 0)
                 return board[0][i];
         }
-        console.log('null column')
         return null;
     }
 
     const checkDiagonal = () => {
-
-        console.log('diagonal first!')
         // Main Diagonal
         if (board[0][0] == board[1][1] &&
             board[1][1] == board[2][2] &&
             board[0][0] != 0)
             return board[0][0];
 
-            console.log('diagonal second!')
         // Opposite Diagonal
         if (board[0][2] == board[1][1] &&
             board[1][1] == board[2][0] &&
             board[0][2] != 0)
             return board[0][2];
 
-        console.log('null diagonal')
         return null;
     }
 
@@ -85,10 +76,7 @@ const gameboard = (function () {
 })();
 
 // Game module
-const game = (function () {
-    const playerOne = createPlayer('First Player', 1)
-    const playerTwo = createPlayer('Second Player', 2)
-
+function gameController(playerOne, playerTwo) {
     let activePlayer = playerOne;
     let endOfGame = false;
     let winner = '';
@@ -100,30 +88,33 @@ const game = (function () {
         activePlayer = activePlayer == playerOne ? playerTwo : playerOne;
     }
 
-    const startGame = () => {
-        while(!endOfGame && round < maxRounds) {
-            console.clear()
-            gameboard.printBoard()
-            const input = prompt('Choose a position (rows cols). Ex: "0 0" for cell one.');
-            [x, y] = input.split(" ");
-            let isUpdated = gameboard.updateBoard(activePlayer.getToken(), x, y)
-            if (gameboard.checkWin() != null) {
-                winner = activePlayer
-                console.log(winner.getName());
-                gameboard.printBoard()
-                endOfGame = true;
-            }
-            if (isUpdated && !endOfGame) {
-                changeTurn();
-                round++;
-            }
+    const getActivePlayer = () => activePlayer;
+
+    const getWinner = () => winner;
+
+    const getEndOfGame = () => endOfGame;
+
+    const playRound = (x, y) => {
+        if (endOfGame) return;
+
+        let isUpdated = gameboard.updateBoard(activePlayer.getToken(), x, y)
+        
+        if (gameboard.checkWin() != null) {
+            winner = activePlayer.getName()
+            endOfGame = true;
+            return;
         }
 
-        if (round == maxRounds) console.log('Tie!')
+        if (isUpdated && !endOfGame) {
+            changeTurn();
+            round++;
+        }
+
+        if (round == maxRounds) endOfGame = true;
     }
 
-    return { startGame }
-})();
+    return { getActivePlayer, playRound, getWinner, getEndOfGame }
+}
 
 // Player factory function
 function createPlayer(name, token) {
@@ -136,9 +127,58 @@ function createPlayer(name, token) {
     return { getName, getToken };
 }
 
-// Game initializer
-function init() {
-    // game.startGame()
+// TODO displayController: organize code, handleRestart, handleReset
+const displayController = () => {
+    const contentX = 'X'
+    const contentO = 'O'
+    const form = document.querySelector('form')
+    const submit = form.querySelector('button')
+    const grid = document.querySelector('.grid')
+    let playerOne, playerTwo, game, activePlayer;
+
+    const handleSubmit = (e) => {
+        let playerOneName = document.getElementById('playerOne').value
+        let playerTwoName = document.getElementById('playerTwo').value
+        if (!playerOneName || !playerTwoName) return;
+        playerOne = createPlayer(playerOneName, 1);
+        playerTwo = createPlayer(playerTwoName, 2);
+        game = gameController(playerOne, playerTwo);
+        activePlayer = game.getActivePlayer();
+        form.classList.add('hidden');
+        grid.classList.remove('hidden');
+        handleTurn();
+    }
+
+    submit.addEventListener('click', handleSubmit);
+    
+
+    // Grid
+    const buttons = document.querySelectorAll('.grid button');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if(!game.getEndOfGame()) {
+                const [x, y] = button.getAttribute('data-index').split(" ");
+                activePlayer = game.getActivePlayer();
+                const token = activePlayer.getToken() == 1 ? contentX : contentO;
+                button.textContent = token
+                game.playRound(x, y);
+                activePlayer = game.getActivePlayer();
+                handleTurn();
+                if(game.getEndOfGame()) handleEndOfGame();
+            }
+        });
+    });
+
+    const turnDiv = document.querySelector('.turn')
+    const handleTurn = () => {
+        turnDiv.textContent = `${activePlayer.getName()}'s Turn!`
+    }
+
+    const winnerDiv = document.querySelector('.winner')
+    const handleEndOfGame = () => {
+        turnDiv.classList.add('hidden')
+        winnerDiv.textContent = `${game.getWinner()} Wins!`
+    }
 }
 
-init()
+displayController();
