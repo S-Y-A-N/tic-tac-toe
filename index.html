@@ -13,7 +13,12 @@
     <header>
         <h1>Tic Tac Toe</h1>
     </header>
+
     <main>
+        <div id="end-buttons" class="hidden">
+            <button class="hidden">Back to Main Screen</button>
+            <button class="hidden">Play Again</button>
+        </div>
         <div class="turn"></div>
         <form action="#">
             <p>Remember, X starts first!</p>
@@ -29,6 +34,7 @@
 
             <button type="submit">Start Game</button>
         </form>
+
         <div class="grid hidden">
             <button data-index="0 0"></button>
             <button data-index="0 1"></button>
@@ -42,6 +48,7 @@
         </div>
         <div class="winner"></div>
     </main>
+
     <footer>
         <p>
             <a href="https://github.com/S-Y-A-N" target="_blank">
