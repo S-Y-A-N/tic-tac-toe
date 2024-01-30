@@ -14,17 +14,33 @@
         <h1>Tic Tac Toe</h1>
     </header>
     <main>
-        <div class="grid">
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
+        <div class="turn"></div>
+        <form action="#">
+            <p>Remember, X starts first!</p>
+            <div>
+                <label for="playerOne">Player X</label>
+                <input type="text" id="playerOne" placeholder="mewone" required>
+            </div>
+
+            <div>
+                <label for="playerTwo">Player O</label>
+                <input type="text" id="playerTwo" placeholder="mewtwo" required>
+            </div>
+
+            <button type="submit">Start Game</button>
+        </form>
+        <div class="grid hidden">
+            <button data-index="0 0"></button>
+            <button data-index="0 1"></button>
+            <button data-index="0 2"></button>
+            <button data-index="1 0"></button>
+            <button data-index="1 1"></button>
+            <button data-index="1 2"></button>
+            <button data-index="2 0"></button>
+            <button data-index="2 1"></button>
+            <button data-index="2 2"></button>
         </div>
+        <div class="winner"></div>
     </main>
     <footer>
         <p>
