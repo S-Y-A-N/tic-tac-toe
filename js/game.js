@@ -2,12 +2,17 @@
 const gameboard = (function () {
     const board = [];
 
-    for (let i = 0; i < 3; i++) {
-        board[i] = [];
-        for (let j = 0; j < 3; j++) {
-          board[i].push(0);
+    const clearBoard = () => {
+        for (let i = 0; i < 3; i++) {
+            board[i] = [];
+            for (let j = 0; j < 3; j++) {
+              board[i].push(0);
+            }
         }
-    }
+    };
+
+    // initialize the board to 0's (initial state)
+    clearBoard();
 
     const getBoard = () => board;
 
@@ -72,7 +77,7 @@ const gameboard = (function () {
         else                       return null;
     }
 
-    return { getBoard, updateBoard, printBoard, checkWin };
+    return { getBoard, updateBoard, printBoard, clearBoard, checkWin };
 })();
 
 // Game module
@@ -127,8 +132,8 @@ function createPlayer(name, token) {
     return { getName, getToken };
 }
 
-// TODO displayController: organize code, handleRestart, handleReset
-const displayController = () => {
+// TODO displayController: organize code!!!!!!!!!!!!!
+const displayController = (function () {
     const contentX = 'X'
     const contentO = 'O'
     const form = document.querySelector('form')
@@ -136,13 +141,84 @@ const displayController = () => {
     const grid = document.querySelector('.grid')
     let playerOne, playerTwo, game, activePlayer;
 
-    const handleSubmit = (e) => {
-        let playerOneName = document.getElementById('playerOne').value
-        let playerTwoName = document.getElementById('playerTwo').value
-        if (!playerOneName || !playerTwoName) return;
+    // Change Turn Text
+    const turnDiv = document.querySelector('.turn')
+
+    function handleTurn() {
+        turnDiv.classList.remove('hidden')
+        turnDiv.textContent = `${activePlayer.getName()}'s Turn!`
+    }
+
+    // Handle End of Game
+    const winnerDiv = document.querySelector('.winner')
+    const restart = document.getElementById('restart')
+    const reset = document.getElementById('reset')
+
+    // TODO -- HANDLE RESTART
+    function clear() {
+        console.log('clearing...')
+        buttons.forEach(button => button.textContent = '');
+        turnDiv.textContent = ''
+        winnerDiv.textContent = ''
+
+        restart.classList.add('hidden')
+        reset.classList.add('hidden')
+        winnerDiv.classList.add('hidden')
+        gameboard.clearBoard()
+    }
+
+    // Restart (with same players names)
+    function handleRestart() {
+        clear()
+        handleSubmit()
+    }
+
+    // Restart (with same players names)
+    function handleReset() {
+        clear()
+        playerOneName = undefined;
+        playerTwoName = undefined;
+        document.getElementById('playerOne').value = ''
+        document.getElementById('playerTwo').value = ''
+        grid.classList.add('hidden')
+        form.classList.remove('hidden')
+    }
+
+    function handleEndOfGame() {
+        winnerDiv.classList.remove('hidden')
+        turnDiv.classList.add('hidden')
+        restart.classList.remove('hidden')
+        reset.classList.remove('hidden')
+        restart.addEventListener('click', handleRestart)
+        reset.addEventListener('click', handleReset)
+
+        if (game.getWinner() != '')
+            winnerDiv.textContent = `${game.getWinner()} Wins!`
+        else
+            winnerDiv.textContent = `It's a tie! a draw! a win and a loss ~`
+    }
+
+    // Form
+    const buttons = document.querySelectorAll('.grid > button');
+    let playerOneName, playerTwoName;
+    function handleSubmit() {
+        console.log(!playerOneName)
+        if (playerOneName != undefined && playerTwoName != undefined) {
+            // When replaying same game
+            console.log('here')
+         } else {
+            playerOneName = document.getElementById('playerOne').value
+            playerTwoName = document.getElementById('playerTwo').value
+        }
+
+        if (playerOneName == '' || playerTwoName == '') return;
+
         playerOne = createPlayer(playerOneName, 1);
         playerTwo = createPlayer(playerTwoName, 2);
         game = gameController(playerOne, playerTwo);
+
+        console.log(`${gameboard.printBoard()}`)
+
         activePlayer = game.getActivePlayer();
         form.classList.add('hidden');
         grid.classList.remove('hidden');
@@ -150,35 +226,23 @@ const displayController = () => {
     }
 
     submit.addEventListener('click', handleSubmit);
-    
 
     // Grid
-    const buttons = document.querySelectorAll('.grid button');
+    function handleGame(e) {
+        if(!game.getEndOfGame() || e.target.textContent != '') {
+            const [x, y] = e.target.getAttribute('data-index').split(" ");
+            activePlayer = game.getActivePlayer();
+            const token = activePlayer.getToken() == 1 ? contentX : contentO;
+            e.target.textContent = token
+            game.playRound(x, y);
+            activePlayer = game.getActivePlayer();
+            handleTurn();
+            if(game.getEndOfGame()) handleEndOfGame();
+        }
+    }
+
     buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            if(!game.getEndOfGame()) {
-                const [x, y] = button.getAttribute('data-index').split(" ");
-                activePlayer = game.getActivePlayer();
-                const token = activePlayer.getToken() == 1 ? contentX : contentO;
-                button.textContent = token
-                game.playRound(x, y);
-                activePlayer = game.getActivePlayer();
-                handleTurn();
-                if(game.getEndOfGame()) handleEndOfGame();
-            }
-        });
+        button.addEventListener('click', handleGame)
     });
 
-    const turnDiv = document.querySelector('.turn')
-    const handleTurn = () => {
-        turnDiv.textContent = `${activePlayer.getName()}'s Turn!`
-    }
-
-    const winnerDiv = document.querySelector('.winner')
-    const handleEndOfGame = () => {
-        turnDiv.classList.add('hidden')
-        winnerDiv.textContent = `${game.getWinner()} Wins!`
-    }
-}
-
-displayController();
+})();
