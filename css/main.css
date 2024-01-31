@@ -160,13 +160,20 @@ form > div > label {
 form > button {
     margin-top: .7rem;
 }
-button {
+form > button, 
+#restart, 
+#reset {
     /* font-weight: 500; */
     border: none;
     padding: .5rem .8rem;
 }
 
-button:hover, button:focus {
+form > button:hover, 
+form > button:focus, 
+#restart:hover, 
+#restart:focus, 
+#reset:hover, 
+#reset:focus {
     cursor: pointer;
     color: rgb(255, 91, 91);
     box-shadow: 3px 3px 0px #8a0b0b;
@@ -178,6 +185,8 @@ button:hover, button:focus {
     margin-inline: auto;
     display: flex;
     justify-content: space-evenly;
+
+    margin-bottom: 3rem;
 
 }
 
